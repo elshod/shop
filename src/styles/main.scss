@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;700&display=swap');
+
+body {
+    font-family: 'Noto Sans', sans-serif;
+}
+
+.wrapper {
+    max-width: 1000px;
+    margin: auto;
+}
+
+.df {
+    display: flex;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.justify-content-center{
+    justify-content: center;
+}
+
+.align-items-center{
+    align-items: center;
+}
+
+.el-form {
+    &.df {
+        gap:10px;
+    }
+}
+
+.el-input-number,
+.el-select {
+    &.full {
+        width: 100%;
+        .el-input__inner{
+            text-align: left;
+        }
+    }
+}
+
+nav {
+    display: flex;
+    gap:10px;
+    a {
+        text-decoration: none;
+        padding: 5px 12px;
+        color: #000;
+        &.router-link-active {
+            background-color: #37613e;
+            color: #fff;
+            border-radius: 10px;
+        }
+    }
+}
+
+
+.product_img {
+    width: 40px;
+}
