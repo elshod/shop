@@ -32,7 +32,9 @@ export interface Product {
 
 export interface Sale {
     id?: number,
-    product: string,
+    product: number | undefined,
     date: Date,
     quantity: number,
+    summa?: number,
+    info: Product
 }

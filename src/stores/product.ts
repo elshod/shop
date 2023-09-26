@@ -1,4 +1,4 @@
-import type { Product } from '@/models/types'
+import type { Product, Sale } from '@/models/types'
 import {defineStore} from 'pinia'
 import {ref} from 'vue'
 import axios from 'axios'
@@ -10,15 +10,37 @@ export const productStore = defineStore('products',()=>{
 
     const products = ref<Product[]>([])
     const slug = ref<string>('products')
-
+    const productLabel = ref<string[]>([])
+    const productCount = ref<number[]>([])
 
     const all_product = async (): Promise<void> => {
-        let result = await axios.get(`${url}/${slug.value}?_sort=id&_order=desc`)
+        let result = await axios.get(`${url}/${slug.value}?_sort=id&_order=desc&_limit=10`)
         
         if (result.status == 200){
             products.value = [...result.data]
         }
     }
+
+    const all_products_nolimit = async () => {
+        let result = await axios.get(`${url}/${slug.value}`)
+        if (result.status == 200){
+            productLabel.value = result.data.map((item: Product) => item.title)
+            
+            productCount.value = await Promise.all(result.data.map(async (item: Product) => {
+                let count = 0
+                let res = await axios.get(`${url}/sales?product=${item.id}`)
+                if (res.status == 200){
+                    res.data.forEach((el:Sale) => {
+                        count += el.quantity
+                    })
+                }
+                return count
+            }))
+            
+        }
+    }
+
+
 
     const add_product = async (payload: Product): Promise<void> => {
         
@@ -71,7 +93,10 @@ export const productStore = defineStore('products',()=>{
 
     return {
         products,
-
+        productLabel,
+        productCount,
+        
+        all_products_nolimit,
         toggle_product_status,
         all_product,
         remove_product,

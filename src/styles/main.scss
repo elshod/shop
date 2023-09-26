@@ -31,6 +31,19 @@ body {
     }
 }
 
+.m {
+    &r {
+        &-1 {
+            margin-right: 10px;
+        }
+    }
+    &b {
+        &-1 {
+            margin-bottom: 10px;
+        }
+    }
+}
+
 .el-input-number,
 .el-select {
     &.full {
@@ -60,3 +73,25 @@ nav {
 .product_img {
     width: 40px;
 }
+
+.head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+button.add {
+    background-color: #529b2e;
+    color: #fff;
+    border:0;
+    margin-left: 10px;
+    border-radius: 50%;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+

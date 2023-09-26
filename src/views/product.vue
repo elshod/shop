@@ -1,20 +1,34 @@
 <template>
     <div class="about">
-      <h1>Mahsulot turkumlari</h1>
-      <download-excel 
-      :data="products"
-      :fields="fields"
-      >
-        Download Data
-      </download-excel>
-      <el-row :gutter="30">
-        <el-col :span="8">
-          <productForm @edit="handleEdit" :id="id"/>
-        </el-col>
-        <el-col :span="16">
-          <ProductTable @edit="handleEdit"/>
-        </el-col>
-      </el-row>
+      <div class="head">
+        <div class="df align-items-center">
+          <h1>Mahsulotlar</h1>
+          <button class="add" @click="toggle = true">
+            <el-icon><plus/></el-icon>
+          </button>
+        </div>
+        <download-excel 
+        :data="products"
+        :fields="fields"
+        >
+          <el-button type="primary">
+            Excel
+          </el-button>
+        </download-excel>
+      </div>
+      <productStatis :params="{
+        summa
+      }"/>
+
+      <div class="content">
+        <productForm 
+          @edit="handleEdit" 
+          :id="id" 
+          :drawerToggle="toggle" 
+          @close="handleClose"
+          />
+        <ProductTable @edit="handleEdit"/>
+      </div>
     </div>
   </template>
     
@@ -22,9 +36,10 @@
   import  type { Category, ProductParam} from '@/models/types'
   import productForm from '@/components/product/product-form.vue';
   import ProductTable from '@/components/product/product-table.vue';
+  import ProductStatis from '@/components/product/product-statis.vue';
   import { productStore } from '@/stores/product';
   import { categoryStore } from '@/stores/category';
-  import { onMounted, ref } from 'vue';
+  import { onMounted, ref, computed } from 'vue';
   import { storeToRefs } from 'pinia';
 
   const store = productStore()
@@ -33,7 +48,8 @@
   const {products} = storeToRefs(store)
 
   const id = ref<number>(0)
-  
+  const toggle = ref<boolean>(false)
+
   const fields = ref(
     {
       "Mahsulot nomi": "title",
@@ -74,6 +90,14 @@
       }
     }
   )
+  
+    const summa = computed(() => {
+      let s = 0 
+      products.value.forEach(product => {
+        s += product.quantity * product.price
+      })
+      return s
+    })
 
   const getCategory = (id: number): string => {
     let res = categories.value.find((category: Category)=> category.id === id)
@@ -82,7 +106,13 @@
 
   const handleEdit = (val: number) => {
     id.value = val
+    toggle.value = true
   }
+
+  const handleClose = () => {
+    toggle.value = false
+  }
+
   onMounted(() => {
     catStore.all_category()
     store.all_product()

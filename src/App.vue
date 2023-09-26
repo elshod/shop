@@ -8,6 +8,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
       <nav>
         <RouterLink to="/">Bosh sahifa</RouterLink>
+        <RouterLink to="/sale">Hisobot</RouterLink>
         <RouterLink to="/category">Turkumlar</RouterLink>
         <RouterLink to="/param">Xarakteristika</RouterLink>
         <RouterLink to="/product">Mahsulotlar</RouterLink>

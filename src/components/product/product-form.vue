@@ -1,90 +1,98 @@
 <template>
-    <div>
-        <el-form 
-            ref="productForm"
-            :model="product"
-            status-icon
-            label-position="top"
-            :rules="rules">
-            <h4>Yangi mahsulot</h4>
-            <el-form-item label="Mahsulot nomi" prop="title">
-                <el-input v-model="product.title"/>
-            </el-form-item>
-            <el-form-item label="Turkum" prop="category">
-              <el-select 
-                class="full"
-                v-model="product.category" 
-                @change="getParams(product.category)"
-                filterable placeholder="Ro'yhatdan tanlang">
-                <el-option
-                  v-for="item in catList"
-                  :key="item.id"
-                  :label="item.title"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
+    <el-drawer 
+      :model-value="toggleModel" 
+      title="Yangi mahsulot"
+      :before-close="closeEmit"
+      >
+      <el-form 
+          ref="productForm"
+          :model="product"
+          status-icon
+          label-position="top"
+          :rules="rules">
+          
+          <el-form-item label="Mahsulot nomi" prop="title">
+              <el-input v-model="product.title"/>
+          </el-form-item>
+          <el-form-item label="Turkum" prop="category">
+            <el-select 
+              class="full"
+              v-model="product.category" 
+              @change="getParams(product.category)"
+              filterable placeholder="Ro'yhatdan tanlang">
+              <el-option
+                v-for="item in catList"
+                :key="item.id"
+                :label="item.title"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
 
-            <el-form-item label="Narhi" props="price">
-                <el-input
-                class="full"
-                type="number"
-                v-model="product.price" 
-                :controls="false">
-                <template #append>so'm</template>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="Soni" props="quantity">
-                <el-input-number 
-                class="full"
-                v-model="product.quantity" 
-                :controls="false"/>
-            </el-form-item>
+          <el-form-item label="Narhi" props="price">
+              <el-input
+              class="full"
+              type="number"
+              v-model="product.price" 
+              :controls="false">
+              <template #append>so'm</template>
+              </el-input>
+          </el-form-item>
+          <el-form-item label="Soni" props="quantity">
+              <el-input-number 
+              class="full"
+              v-model="product.quantity" 
+              :controls="false"/>
+          </el-form-item>
 
-            <el-form-item label="Rasmi url" props="img">
-                <el-input v-model="product.img"/>
-            </el-form-item>
+          <el-form-item label="Rasmi url" props="img">
+              <el-input v-model="product.img"/>
+          </el-form-item>
 
-            <div v-if="product.params">
-              <h4>Mahsulot xarakteristikalari</h4>
-                <el-form-item
-                    v-for="param,index of product.params"
-                    :key="index"
-                    :label="param.title"
-                    >
-                    <el-input v-model="param.value"/>
-                </el-form-item>
-            </div>
+          <div v-if="product.params.length > 0">
+            <h4>Mahsulot xarakteristikalari</h4>
+              <el-form-item
+                  v-for="param,index of product.params"
+                  :key="index"
+                  :label="param.title"
+                  >
+                  <el-input v-model="param.value"/>
+              </el-form-item>
+          </div>
 
-            
+          
 
-            
+          
 
-            <el-form-item label="Holat" prop="status">
-                <el-switch
-                    v-model="product.status"
-                    size="large"
-                    active-text="Faol"
-                    inactive-text="Nofaol"
-                />
-            </el-form-item>
-            <el-button type="primary" @click="submitForm(productForm)">
-                Saqlash
-            </el-button>
-        </el-form>
-    </div>
+          <el-form-item label="Holat" prop="status">
+              <el-switch
+                  v-model="product.status"
+                  size="large"
+                  active-text="Faol"
+                  inactive-text="Nofaol"
+              />
+          </el-form-item>
+          <el-button type="primary" @click="submitForm(productForm)">
+              Saqlash
+          </el-button>
+      </el-form>
+    </el-drawer>
 </template>
 <script setup lang="ts">
 import type { Product, Category, ProductParam, Param } from '@/models/types';
 import type { FormInstance, FormRules } from 'element-plus'
 import {ref, computed, watch} from 'vue'
-const props = defineProps(['id'])
-const emit = defineEmits(['edit'])
+const props = defineProps(['id','drawerToggle'])
+const emit = defineEmits(['edit','close'])
+
+const toggleModel = computed(() => props.drawerToggle)
+const closeEmit = () => {
+  emit('close')
+}
 
 import { productStore } from '@/stores/product';
 const store = productStore()
 const {add_product, save_product, get_product} = store
-
 
 import { categoryStore } from '@/stores/category';
 const catStore = categoryStore()
@@ -97,8 +105,6 @@ const {get_params_by_category} = parStore
 const catList = computed(() => catStore.categories.filter((category: Category) => category.status))
 
 const productForm = ref<FormInstance>()
-
-
 const product = ref<Product>({
     title: '',
     category: null,
@@ -109,6 +115,7 @@ const product = ref<Product>({
     params: [],
     img:''
 })
+
 const toggle = ref<boolean>(false)
 const ruleForm = ref({
     title: '',
@@ -163,6 +170,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           img: ''      
         }
       toggle.value = false
+      closeEmit()
     } else {
       console.log('error submit!', fields)
     }
@@ -194,7 +202,6 @@ watch(() => props.id, async (val:number) => {
     toggle.value = true
   }
 })
-
 
 
 </script>

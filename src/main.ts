@@ -6,7 +6,7 @@ import 'element-plus/dist/index.css'
 import App from './App.vue'
 import router from './router'
 import JsonExcel from "vue-json-excel3";
-
+import VueCookies from 'vue-cookies'
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
@@ -19,6 +19,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)
+app.use(VueCookies, { expires: '1d'})
 app.component("downloadExcel", JsonExcel);
 
 app.mount('#app')
